@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>最全日期控件My97DatePicker</title>
+<script type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
+<style type="text/css">
+	.txt{cursor: pointer;
+	}
+	
+	.txt_week{width: 15px;
+	}
+	.sp{font-size: 12px;
+		color: #09F;
+	}
+	.sp1{font-size: 12px;
+		color:#F66;
+	}
+	
+	#outerDiv{text-align:left;
+		width: 600px;
+		border: 1px solid #CCCCCC;
+		padding: 10px 0 5px 5px;
+	}
+</style>
+</head>
+
+<body>
+	<center>
+	<div id="outerDiv">
+        <input type="text" id="txt_time" name="txt_time" readonly="readonly" onclick="WdatePicker();" class="txt" />
+        <span class="sp">普通显示</span>
+        <br />
+        <input type="text" readonly="readonly" class="txt" id="txt1" />
+        <img src="My97DatePicker/skin/datePicker.gif" style="cursor:pointer;" width="16" height="22" align="absmiddle" onclick="WdatePicker({el: 'txt1'});" />
+        <span class="sp">图标触发</span>
+        <br />
+        <input type="text" readonly="readonly" class="txt" onclick="WdatePicker({isShowWeek: true, onpicked: function(){$dp.$('txt_show_week').value=$dp.cal.getP('W','WW');;}});"/>
+        <span class="sp1">第<input id="txt_show_week" class="txt_week" readonly="readonly" />周</span>
+        <span class="sp">支持周显示 </span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true});" class="txt" />
+        <span class="sp">只读开关</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, isShowClear:false});" class="txt" />
+        <span class="sp">禁用清空</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, position:{left: 20, top: 30}});" class="txt" />
+        <span class="sp">自定义弹出位置</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, firstDayOfWeek: 2});" class="txt" />
+        <span class="sp">以星期二作为第一天</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, startDate: '1983-1-16', alwaysUseStartDate: true});" class="txt" />
+        <span class="sp">起始日期</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, dateFmt:'yyyy-MM-dd HH:mm:ss'});" class="txt" />
+        <span class="sp">内置参数</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, dateFmt:'yyyy年MM月dd日', vel: 'txt_rel'});" class="txt" />
+        <input type="text" readonly="readonly" id="txt_rel" />
+        <span class="sp">取得系统可识别的日期值</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, doubleCalendar: true});" class="txt" />
+        <span class="sp">双月日历功能</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, skin:'blue'});" class="txt" />
+        <span class="sp">换肤演示</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, minDate:'1983-1-16', maxDate:'2010-5-6'});" class="txt" />
+        <span class="sp">限制日期的范围是1983-01-16到2010-05-06</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, maxDate:'%y-%M-%d'});" class="txt" />
+        <span class="sp">只能选择今天以前的日期(包括今天)</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true, maxDate:'%y-%M-{%d-1}'});" class="txt" />
+        <span class="sp">只能选择今天以前的日期(不包括今天)</span>
+        <br />
+        <input type="text" onclick="WdatePicker({readOnly:true,  minDate: '%y-%M-01', maxDate:'%y-%M-%ld'});" class="txt" />
+        <span class="sp">只能选择本月的日期1号至本月最后一天</span>
+        <br />
+        <input type="text" id="txt_first" onclick="WdatePicker({readOnly:true, maxDate:'#F{$dp.$D(\'txt_last\')||\'2012-12-31\'}'});" class="txt" />
+        <input type="text" id="txt_last" onclick="WdatePicker({readOnly:true,  minDate: '#F{$dp.$D(\'txt_first\')}', maxDate:'2012-12-31'});" class="txt" />
+        <span class="sp">日期不能大于后面的且两个都不能大于2012-12-31</span>
+        <br />
+        <input type="text" id="txt_first_2" onclick="WdatePicker({readOnly:true, maxDate:'#F{$dp.$D(\'txt_last_2\',{d:-1})||\'2012-12-31\'}'});" class="txt" />
+        <input type="text" id="txt_last_2" onclick="WdatePicker({readOnly:true,  minDate: '#F{$dp.$D(\'txt_first_2\',{d:1})}', maxDate:'2012-12-31'});" class="txt" />
+        <span class="sp">和楼上的微妙差别</span>
+        <br />
+    </div>
+    </center>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- <link rel="stylesheet" type="text/css" href="./css/reset.css" /> -->
+		<!-- <link rel="stylesheet" type="text/css" href="css/table.css" /> -->
+		<!-- <script src="./utils/vue/vue.min.js" type="text/javascript" charset="utf-8"></script> -->
+		<!-- <script src="./utils/axios/axios.min.js" type="text/javascript" charset="utf-8"></script> -->
+		<style type="text/css">
+			[v-cloak] {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app" v-cloak>
+			<!-- 页面跳转 -->
+			<div class="content-top-toolbar">
+				<div class="top-content-wrap flex">
+					<div class="top-content-item" @click="skipPage('首页')">
+						<span class="btn-index-icon icon"></span>
+						<button type="button" class="btn-index">首页</button>
+					</div>
+					<span class="sep"> </span>
+					<div class="top-content-item" @click="skipPage(-1)">
+						<span class="btn-prev-icon icon"></span>
+						<button type="button" class="btn-index">上一页</button>
+					</div>
+					<span class="sep"> </span>
+					<div class="input-page-wrap">
+						<input type="text" v-model="page" @keydown.enter="skipPage">
+					</div>
+					<span class="total-page">/{{totalPage}}</span>
+					<span class="sep"> </span>
+					<div class="top-content-item" @click="skipPage(1)">
+						<span class="btn-next-icon icon"></span>
+						<button type="button" class="btn-index">下一页</button>
+					</div>
+					<span class="sep"> </span>
+					<div class="top-content-item" @click="skipPage('末页')">
+						<span class="btn-end-icon icon"></span>
+						<button type="button" class="btn-index">末页</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- 条件搜索 -->
+			<div v-if="searchArray.length !== 0" :class="['search-wrap','scroll1', {'active': !isShowSearch}]" @click="handlePrevent">
+				<div class="content-width flex">
+					<div class="left">
+						<div class="search-content-top">
+							<div :class="['search-item', {'date': item.date}, {'sort': item.sort}]" v-for="(item,index) in topSearchArray"
+							 :key="index">
+								<span class="search-name">{{item.name}}：</span>
+								<template v-if="!item.date&&!item.sort">
+
+									<div class="search flex">
+										<div class="search-input">
+											<input type="text" v-model="item.value" @keydown.enter="search"/>
+										</div>
+										<template v-if="item.menuList && item.menuList.length > 0">
+										<div class="menu-down-btn" @click.stop="menuDown(item)" v-if="item.menuList && item.menuList.length > 0">
+											<div></div>
+										</div>
+										
+										<div class="search-list" v-show="item.menuDown">
+											<p :class="['search-list-item',{'active': index1 == 0}]" v-for="(item1, index1) in item.menuList" :key="index1" @click="chooseOption(item,index1)">{{item1.name}}</p>
+											
+										</div>
+										</template>
+									</div>
+								</template>
+								<!-- 日期 -->
+								<template v-if="item.date">
+									<!-- <span class="search-name">{{item.name}}：</span> -->
+									<div class="search flex">
+										<div class="search-input">
+											<input :id="'date'+index+1" type="text" v-model="item.value1" @blur="dateInput(item,'value1', $event)" />
+										</div>
+										<div class="menu-down-btn">
+											<div onclick="WdatePicker({isShowWeek: true, el:this.parentNode.parentNode.childNodes[0].childNodes[0].id})"></div>
+										</div>
+									</div>
+									<span class="t">至</span>
+									<div class="search flex">
+										<div class="search-input">
+											<input :id="'date'+index+2" type="text" v-model="item.value2" @blur="dateInput(item,'value2', $event)" />
+										</div>
+										<div class="menu-down-btn">
+											<!-- WdatePicker({isShowWeek: true, el:}) -->
+											<!-- console.dir(this.parentNode.parentNode.childNodes[0].childNodes[0]) -->
+											<div onclick="WdatePicker({isShowWeek: true, el:this.parentNode.parentNode.childNodes[0].childNodes[0].id})"></div>
+										</div>
+									</div>
+								</template>
+								<!-- 排序 -->
+								<template v-if="item.sort">
+									<!-- 名称 -->
+									<div class="search flex">
+										<div class="search-input">
+											<input type="text" v-model="item.value2" />
+										</div>
+										<div class="menu-down-btn" @click.stop="menuDown(item, 2)">
+											<div></div>
+										</div>
+										<div class="search-list" v-show="item.menu2Down">
+											<p :class="['search-list-item',{'active': index2 == 0}]" v-for="(item2, index2) in item.menu2List" :key="index2" @click="chooseOption(item,index2,2)">{{item2.name}}</p>
+											
+										</div>
+									</div>
+									<span class="t">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+									<!-- 顺序 -->
+									<div class="search flex">
+										<div class="search-input">
+											<input type="text" v-model="item.value1" />
+										</div>
+										<div class="menu-down-btn" @click.stop="menuDown(item, 1)">
+											<div></div>
+										</div>
+										<div class="search-list" v-show="item.menu1Down">
+											<p class="search-list-item" v-for="(item1, index1) in item.menu1List" :key="index1" @click="chooseOption(item,index1,1)">{{item1.name}}</p>
+											
+										</div>
+									</div>
+								</template>
+							</div>
+
+						</div>
+
+						<div class="search-content-bottom">
+							<div :class="['search-item', {'date': item.date}, {'sort': item.sort}]" v-for="(item,index) in bottomSearchArray"
+							 :key="index">
+								<span class="search-name">{{item.name}}：</span>
+								<template v-if="!item.date&&!item.sort">
+
+									<div class="search flex">
+										<div class="search-input">
+											<input type="text" v-model="item.value" @keydown.enter="search"/>
+										</div>
+										<template v-if="item.menuList && item.menuList.length > 0">
+										<div class="menu-down-btn" @click.stop="menuDown(item)" v-if="item.menuList && item.menuList.length > 0">
+											<div></div>
+										</div>
+										
+										<div class="search-list" v-show="item.menuDown">
+											<p :class="['search-list-item',{'active': index1 == 0}]" v-for="(item1, index1) in item.menuList" :key="index1" @click="chooseOption(item,index1)">{{item1.name}}</p>
+										</div>
+										</template>
+									</div>
+								</template>
+								<!-- 日期 -->
+								<template v-if="item.date">
+									<!-- <span class="search-name">{{item.name}}：</span> -->
+									<div class="search flex">
+										<div class="search-input">
+											<input :id="'date'+index+3" type="text" v-model="item.value1" @blur="dateInput(item,'value1', $event)" />
+										</div>
+										<div class="menu-down-btn">
+											<div onclick="WdatePicker({isShowWeek: true, el:this.parentNode.parentNode.childNodes[0].childNodes[0].id})"></div>
+										</div>
+									</div>
+									<span class="t">至</span>
+									<div class="search flex">
+										<div class="search-input">
+											<input :id="'date'+index+4" type="text" v-model="item.value2" @blur="dateInput(item,'value2', $event)" />
+										</div>
+										<div class="menu-down-btn">
+											<div onclick="WdatePicker({isShowWeek: true, el:this.parentNode.parentNode.childNodes[0].childNodes[0].id})"></div>
+										</div>
+									</div>
+								</template>
+								<!-- 排序 -->
+								<template v-if="item.sort">
+									<!-- 名称 -->
+									<div class="search flex">
+										<div class="search-input">
+											<input type="text" v-model="item.value2" />
+										</div>
+										<div class="menu-down-btn" @click.stop="menuDown(item, 2)">
+											<div></div>
+										</div>
+										<div class="search-list" v-show="item.menu2Down">
+											<p :class="['search-list-item',{'active': index2 == 0}]" v-for="(item2, index2) in item.menu2List" :key="index2" @click="chooseOption(item,index2,2)">{{item2.name}}</p>
+											
+										</div>
+									</div>
+									<span class="t">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+									<!-- 顺序 -->
+									<div class="search flex">
+										<div class="search-input">
+											<input type="text" v-model="item.value1" />
+										</div>
+										<div class="menu-down-btn" @click.stop="menuDown(item, 1)">
+											<div></div>
+										</div>
+										<div class="search-list" v-show="item.menu1Down">
+											<p class="search-list-item" v-for="(item1, index1) in item.menu1List" :key="index1" @click="chooseOption(item,index1,1)">{{item1.name}}</p>
+											
+										</div>
+									</div>
+								</template>
+							</div>
+
+						</div>
+					</div>
+					<div v-if="searchArray.length !== 0" class="right flex">
+						<button type="button" @click="refresh">刷新</button>
+						<button type="button" @click="search">查询</button>
+					</div>
+					<div class="add-btn" v-if="TABLEDATA.addButton">
+						<button type="button"><a :href="TABLEDATA.addButton.href" target="_blank">{{TABLEDATA.addButton.text}}</a></button>
+					</div>
+				</div>
+			</div>
+			<div v-if="searchArray.length !== 0" :class="['fr-horizontalboxlayout', {'active': !isShowSearch}]" @click="toggleSearchWrap">
+				<div></div>
+			</div>
+
+			<!-- tabel -->
+			<div :class="['table-wrap',{'active': !isShowSearch}, {'a': searchArray.length == 0}]">
+				<div class="scroll">
+					<table cellspacing="0" cellpadding="0">
+						<colgroup>
+							<col v-for="(item, index) in tableHeader.concat(addTableHeader)" :key="index" :style="{'width':item.colWidth}"/>
+						</colgroup>
+						<thead>
+							<th v-for="(item, index) in tableHeader" :key="index">{{item.name}}</th>
+							<!-- 操作 -->
+							<template v-for="(item, index) in addTableHeader" >
+								<th v-if="index == 0" :colspan="addTableHeader.length" >{{item.name}}</th>
+							</template>
+
+						</thead>
+						<tbody>
+							<template v-if="renderTableDate.length == 0">
+								<tr>
+									<td :colspan="tableHeader.length+addTableHeader.length">{{tips}}</td>
+								</tr>
+							</template>
+							<template v-if="!isLoading && renderTableDate.length > 0" v-for="(item,index) in renderTableDate" >
+								<tr :class="[{'bg': index%2 !==0},{'active': m.active}]" v-for="(m,i) in item.childs" :key="index+'-'+i">
+									<!-- 编号 -->
+									<td class="index" v-if="i==0" :rowspan="item.childs.length">{{(page-1) * pageSize + index +1}}</td>
+									<!-- 名 单元格 -->
+									<td :class="['name', {'active': m.titleColor}]" v-if="i==0" :rowspan="item.childs.length">
+										<template v-if="m.nameHref != 'javascript:;'">
+											<a target="_blank" :href="m.nameHref">{{item[tableHeader[1].sName]}}</a>
+										</template>
+										<template v-if="m.nameHref == 'javascript:;'">
+											{{item[tableHeader[1].sName]}}
+										</template>
+									</td>
+									<!-- 其它单元格 -->
+									<template v-for="(item1, index1) in tableHeader">
+										<!-- 除了日期 -->
+										<template v-if="index1 > 1 && item1.name.indexOf('日期') == -1">
+											<template v-if="m.nameHref1 && m.nameHref1.name === item1.sName">
+												<td>
+												<a target="_blank" :href="m.nameHref1.href">{{m[item1.sName]}}</a>
+												</td>
+											</template>
+											<template v-else>
+												<td v-if="Array.isArray(m[item1.sName]) && m[item1.sName].length > 0" :rowspan="m[item1.sName].length">
+													{{m[item1.sName][0]}}
+												</td>
+												
+												<td v-if="!Array.isArray(m[item1.sName])">
+													{{m[item1.sName]}}
+												</td>
+											</template>
+										</template>
+										<!-- 日期 -->
+										<td v-if="index1 > 1 && item1.name.indexOf('日期') > -1">
+											{{m[item1.sName]&&m[item1.sName].slice(0, 10)}}
+										</td>
+									</template>
+									<!-- 操作单元格 -->
+										<td v-for="(item2, index2) in m.addTableHeader" :style="item2.style">
+											<!-- 是否有链接 -->
+											<template v-if="item2.href != 'javascript:;'">
+												<!-- 下载 -->
+												<template v-if="item2.isDownLoad">
+													<a :href="item2.href" >{{item2.tdName}}</a>
+												</template> 
+												<template v-if="!item2.isDownLoad">
+													<a :href="item2.href"  target="_blank">{{item2.tdName}}</a>
+												</template>
+											</template>
+											<template v-if="item2.href == 'javascript:;'">
+												{{item2.tdName}}
+											</template>
+										</td>
+									<!-- 星 -->
+									<td class="star" v-if="m.isStar">
+										<a target="_blank" :href="m.startHref" title="重要！关键工序已审批完毕，请尽快审批">☆</a>
+									</td>
+								</tr>
+							</template> 
+
+
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+
+
+		</div>
+
+
+		<script src="./utils/My97DatePicker/My97DatePicker/WdatePicker.js" type="text/javascript" charset="utf-8"></script>
+		<!-- <script src="https://cdn.bootcss.com/vuejs-datepicker/1.6.2/vuejs-datepicker.min.js"></script> -->
+		<!-- <script src="./js/table/tableData.js" type="text/javascript" charset="utf-8"></script> -->
+		<!-- <script src="./js/table/table.js" type="text/javascript" charset="utf-8"></script> -->
+	</body>
+</html>

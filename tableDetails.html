@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- <link rel="stylesheet" type="text/css" href="./css/reset.css" /> -->
+		<!-- <link rel="stylesheet" type="text/css" href="./css/tableDetails.css" /> -->
+		<!-- <script src="./utils/vue/vue.min.js" type="text/javascript" charset="utf-8"></script> -->
+		<!-- <script src="./utils/axios/axios.min.js" type="text/javascript" charset="utf-8"></script> -->
+		<style type="text/css">
+			[v-cloak] {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app" @mousemove="mouseMove" @mouseup="mouseUp" v-cloak>
+			<!-- 页面跳转 -->
+			<!-- <div class="content-top-toolbar">
+				<div class="top-content-wrap flex">
+					<div class="top-content-item">
+						<span class="btn-index-icon icon"></span>
+						<button type="button" class="btn-index">首页</button>
+					</div>
+					<span class="sep"> </span>
+					<div class="top-content-item">
+						<span class="btn-prev-icon icon"></span>
+						<button type="button" class="btn-index">上一页</button>
+					</div>
+					<span class="sep"> </span>
+					<div class="input-page-wrap">
+						<input type="text" v-model="page">
+					</div>
+					<span class="total-page">/1</span>
+					<span class="sep"> </span>
+					<div class="top-content-item">
+						<span class="btn-next-icon icon"></span>
+						<button type="button" class="btn-index">下一页</button>
+					</div>
+					<span class="sep"> </span>
+					<div class="top-content-item">
+						<span class="btn-end-icon icon"></span>
+						<button type="button" class="btn-index">末页</button>
+					</div>
+				</div>
+			</div> -->
+
+			<!-- tabel -->
+			<div class="details-wrap">
+				<div class="details">
+					<p class="title-wrap flex">
+						<span class="title">>>审批流程详细</span>
+						<span class="more"><a :href="href" target="_blank">审批流程页面</a></span>
+					</p>
+					<div class="details-bottom">
+						<div class="b-title flex">
+							<p class="d-title flex">{{title}}</p>
+							<img class="details-icon flex" src="images/details-icon.png" @click="toggleDeloag"></img>
+						</div>
+						<div class="table-wrap">
+							<table>
+								<colgroup>
+									<col style="width:70px;">
+									<col style="width:120px;">
+									<col style="width:112px;">
+									<col style="width:120px;">
+									<col style="width:121px;">
+									<col style="width:780px;">
+									<col style="width:483px;">
+								</colgroup>
+								<thead>
+									<th>序号</th>
+									<th>处理时间</th>
+									<th>处理人</th>
+									<th>处理状态</th>
+									<th>节点名称</th>
+									<th>处理意见</th>
+									<th>内容</th>
+								</thead>
+								<tbody>
+									<template v-for="(item, index) in tableData" >
+										<tr :style="item.style" :key="index">
+												<td class="index">{{tableData.length - index}}</td>
+												<td>{{item.operatedate}}</br>{{item.operatetime}}</td>
+												<td>{{item.OperatorName}}</td>
+												<td>{{item.LogTypeName}}</td>
+												<td>{{item.NodeName}}</td>
+												<td class="opinion" v-html="item.writting"></td>
+												<td class="table-content" v-html="item.attach"></td>
+										</tr>
+									</template>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- 弹窗 -->
+			<div class="deloag-wrap" v-show="isShowDeloag">
+			<div class="border-div" draggable="true" ref="borderDiv" v-show="showdragDiv"></div>
+			<div class="deloag" ref="deloag">
+				<div class="drag" @mousedown="mouseDown" >
+					<div class="close flex" @click.top="toggleDeloag">
+						<img src="images/close.png" />
+					</div>
+				</div>
+				<div class="content-wrap">
+					<div class="content-top-toolbar">
+						<div class="top-content-wrap flex">
+							<div class="top-content-item">
+								<span class="btn-index-icon icon"></span>
+								<button type="button" class="btn-index">首页</button>
+							</div>
+							<span class="sep"> </span>
+							<div class="top-content-item">
+								<span class="btn-prev-icon icon"></span>
+								<button type="button" class="btn-index">上一页</button>
+							</div>
+							<span class="sep"> </span>
+							<div class="input-page-wrap">
+								<input type="text">
+							</div>
+							<span class="total-page">/1</span>
+							<span class="sep"> </span>
+							<div class="top-content-item">
+								<span class="btn-next-icon icon"></span>
+								<button type="button" class="btn-index">下一页</button>
+							</div>
+							<span class="sep"> </span>
+							<div class="top-content-item">
+								<span class="btn-end-icon icon"></span>
+								<button type="button" class="btn-index">末页</button>
+							</div>
+						</div>
+					</div>
+					<div class="content flex">
+						ing...(开发中)
+					</div>
+					
+				</div>
+			
+			</div>
+
+			</div>
+		</div>
+
+	<!-- <script src="./js/tableDetails/tableDetails.js"></script> -->
+
+	</body>
+</html>
